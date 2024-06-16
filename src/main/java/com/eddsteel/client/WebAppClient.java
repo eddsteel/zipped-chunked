@@ -1,6 +1,7 @@
 package com.eddsteel.client;
 
 import com.eddsteel.api.EndpointResponse;
+import com.eddsteel.api.ResponseAndBody;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.ChunkedInput;
@@ -10,6 +11,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -58,12 +60,13 @@ public class WebAppClient {
         return new WebAppClient(client, endpoint);
     }
 
-    public ChunkedInput<EndpointResponse> getEndpointResponse() {
-        ChunkedInput<EndpointResponse> response = client
+    public ResponseAndBody<EndpointResponse> getEndpointResponse() {
+        Response response = client
                 .target(endpoint)
                 .request()
-                .post(Entity.entity("{}", MediaType.APPLICATION_JSON_TYPE),
-                        chunkedInputGenericType);
-        return response;
+                .post(Entity.entity("{}", MediaType.APPLICATION_JSON_TYPE));
+        ChunkedInput<EndpointResponse> body = response.readEntity(chunkedInputGenericType);
+
+        return new ResponseAndBody<EndpointResponse>(response, body);
     }
 }

@@ -1,6 +1,7 @@
 package com.eddsteel.resources;
 
 import com.eddsteel.api.EndpointResponse;
+import com.eddsteel.api.ResponseAndBody;
 import com.eddsteel.client.WebAppClient;
 import org.glassfish.jersey.client.ChunkedInput;
 
@@ -24,10 +25,10 @@ public class ClientResource {
     @GET
     public String callServer() {
         for (int i = 0; i < iterations; i++) {
-            try (ChunkedInput<EndpointResponse> input = client.getEndpointResponse()) {
+            try (ResponseAndBody<EndpointResponse> input = client.getEndpointResponse()) {
                 boolean cont;
                 do {
-                    EndpointResponse next = input.read();
+                    EndpointResponse next = input.getBody().read();
                     cont = next != null;
                 } while (cont);
             }
